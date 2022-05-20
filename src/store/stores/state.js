@@ -3,7 +3,7 @@ export default function () {
     stores: [],
     loading: false,
     store: null,
-    search: "san jose",
+    search: "",
     searchHistory: {},
   };
 }
