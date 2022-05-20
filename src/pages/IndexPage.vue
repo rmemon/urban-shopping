@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-mt-lg q-mx-sm">
-    <div class="row q-col-gutter-sm">
+    <div class="row q-col-gutter-sm" v-if="$q.screen.gt.md">
       <div class="col-12">
         <q-carousel
           :class="$q.platform.is.desktop ? 'q-ml-sm' : ''"
@@ -20,9 +20,68 @@
       <div class="row items-center q-mx-sm">
         <div class="col-12 q-mt-sm">
           <div class="q-pl-md bg-white q-pt-sm">
-            <span class="text-grey-9 text-h6 text-weight-bold"
-              >Latest Launches</span
+            <span class="text-grey-9 text-h6 text-weight-bold">
+              Latest Launches
+            </span>
+            <a class="text-primary q-ml-sm cursor-pointer">[see all]</a>
+          </div>
+          <q-carousel
+            v-model="latest_slide"
+            transition-prev="slide-right"
+            transition-next="slide-left"
+            swipeable
+            animated
+            control-color="primary"
+            navigation
+            padding
+            arrows
+            height="340px"
+            class="rounded-borders"
+          >
+            <q-carousel-slide
+              v-for="(val, idx) in [1, 2, 3]"
+              :name="val"
+              :key="idx"
+              class="column no-wrap"
             >
+              <div
+                class="row fit justify-start items-center q-gutter-xs q-col-gutter no-wrap"
+              >
+                <div
+                  class="col-lg-2 col-md-2 col-sm-12 col-xs-12 hover_border_grey text-center full-height"
+                  v-for="(product, index) in shuffle(products)"
+                  :key="index"
+                >
+                  <q-img class="rounded-borders" :src="`${product.image}.jpeg`">
+                  </q-img>
+                  <div>
+                    {{ product.name }}
+                  </div>
+                  <div class="text-caption text-weight-bold text-green">
+                    Black
+                  </div>
+                  <div>
+                    <span>${{ product.price }}</span>
+                    <span
+                      class="q-ml-sm text-grey-6"
+                      style="text-decoration: line-through"
+                    >
+                      ${{ product.upPrice }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </q-carousel-slide>
+          </q-carousel>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-grey-9 text-weight-bold" v-if="$q.screen.lt.md">
+      <div class="row items-center q-mx-sm">
+        <div class="col-12 q-mt-sm">
+          <div class="q-pl-md bg-white q-pt-sm">
+            <span class="text-grey-9 text-h6 text-weight-bold"> Trending </span>
             <a class="text-primary q-ml-sm cursor-pointer">[see all]</a>
           </div>
           <q-carousel

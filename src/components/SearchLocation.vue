@@ -2,7 +2,9 @@
   <q-dialog standard v-model="dialogState" persistent @show="onShow">
     <q-card style="" class="search-location-card">
       <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6 q-py-sm">SELECT A STORE FOR PICKUP</div>
+        <div class="q-py-sm" :class="{ 'text-h6': $q.screen.gt.md }">
+          SELECT A STORE FOR PICKUP
+        </div>
         <q-space />
         <q-btn
           v-if="myStore && myStore.storeId"
@@ -18,10 +20,6 @@
 
       <q-card-section class="q-pt-lg">
         <div class="row q-col-gutter-md">
-          <!-- <div class="col-12">
-          <q-input label="" />
-           </div> -->
-
           <div class="col-12 col-md-9">
             <div class="form-field">
               <q-input
@@ -86,24 +84,29 @@
           </div>
 
           <div class="col-12 col-md-5">
-            <q-scroll-area
+            <scroll-only-web
+              :scrollStyle="`height: 400px;`"
+              :className="{ 'q-px-md': $q.screen.gt.md }"
+            >
+              <!-- <q-scroll-area
               :thumb-style="thumbStyle"
               :bar-style="barStyle"
               style="height: 400px"
-              class="q-px-md"
-            >
-              <q-list v-if="stores" class="q-px-lg">
+              :class="{ 'q-px-md': $q.screen.gt.md }"
+            > -->
+              <q-list v-if="stores" :class="{ 'q-px-lg': $q.screen.gt.md }">
                 <div
                   v-for="(store, index) in stores"
                   :key="`store-${store.storeId}-${index}`"
                 >
                   <q-item
-                    class="q-pa-sm cursor-pointer location-item"
-                    :class="
+                    class="cursor-pointer location-item"
+                    :class="[
                       activeStore && store.storeId == activeStore.storeId
                         ? `bg-grey-3`
-                        : ''
-                    "
+                        : '',
+                      $q.screen.gt.md ? 'q-pa-sm' : '',
+                    ]"
                     clickable
                     @click="setActiveStore(store)"
                   >
@@ -127,6 +130,26 @@
                       <q-item-label caption lines="2" class="q-pt-sm">
                         For pickup today, order before 6 PM
                       </q-item-label>
+
+                      <div v-if="$q.screen.lt.md" class="q-mt-md">
+                        <q-btn
+                          v-if="myStore && myStore.storeId == store.storeId"
+                          class="q-mx-auto q-px-md"
+                          label="My Store"
+                          dense
+                          rounded
+                        />
+
+                        <q-btn
+                          v-else
+                          color="primary"
+                          class="q-mx-auto q-px-md"
+                          label="Set as my store"
+                          dense
+                          rounded
+                          @click="setAsMyStore(store)"
+                        />
+                      </div>
                     </q-item-section>
 
                     <q-item-section side top>
@@ -136,31 +159,35 @@
                     </q-item-section>
                   </q-item>
 
-                  <q-separator spaced inset />
+                  <q-separator v-if="index != stores.length - 1" spaced inset />
                 </div>
               </q-list>
-            </q-scroll-area>
+              <!-- </q-scroll-area> -->
+            </scroll-only-web>
           </div>
-          <div class="col-12 col-md-7">
+          <div class="col-12 col-md-7" v-if="$q.screen.gt.md">
             <q-card
               class="my-card shadow-0"
               bordered
               style="min-height: 400px"
               v-if="activeStore"
             >
-              <q-scroll-area
+              <scroll-only-web
+                :scrollStyle="`height: 400px;`"
+                :className="{ 'q-px-md': $q.screen.gt.md }"
+              >
+                <!-- <q-scroll-area
                 :thumb-style="thumbStyle"
                 :bar-style="barStyle"
                 style="height: 400px"
                 class="q-px-md"
-              >
+              > -->
                 <q-card-section>
                   <div class="row no-wrap items-center">
                     <div class="col text-h6 ellipsis">
                       {{ activeStore.name }}
                     </div>
                     <div class="col">
-                      <!-- {{ myStore }} -->
                       <q-btn
                         v-if="myStore && myStore.storeId == activeStore.storeId"
                         class="q-mx-auto q-px-md"
@@ -247,7 +274,8 @@
                     </div>
                   </div>
                 </q-card-section>
-              </q-scroll-area>
+                <!-- </q-scroll-area> -->
+              </scroll-only-web>
             </q-card>
           </div>
         </div>
@@ -257,8 +285,9 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from "vue";
+import { computed, ref } from "vue";
 import { useStore } from "vuex";
+import ScrollOnlyWeb from "components/scroll-only-web";
 
 const milesOption = [
   {
